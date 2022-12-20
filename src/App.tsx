@@ -1,19 +1,7 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 axios.defaults.timeout;
-import {
-  Observable,
-  fromEvent,
-  of,
-  map,
-  first,
-  last,
-  from,
-  interval,
-  debounce,
-  debounceTime,
-  throttleTime,
-} from 'rxjs';
+import { fromEvent, interval, throttleTime } from 'rxjs';
 import reactLogo from './assets/react.svg';
 import './App.css';
 
@@ -61,10 +49,10 @@ function App() {
   return (
     <div className="App">
       <div>
-        <a href="https://vitejs.dev" target="_blank">
+        <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
           <img src="/vite.svg" className="logo" alt="Vite logo" />
         </a>
-        <a href="https://reactjs.org" target="_blank">
+        <a href="https://reactjs.org" target="_blank" rel="noreferrer">
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
         <button id="trigger">点击</button>

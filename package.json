@@ -6,6 +6,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "test": "jest",
+    "lint": "eslint src --fix",
     "preview": "vite preview",
     "prepare": "husky install"
   },
@@ -38,7 +39,7 @@
     "vite": "^3.2.3"
   },
   "lint-staged": {
-    "*.js": "eslint --cache --fix",
+    "*.{js,ts,tsx}": "eslint --cache --fix",
     "*.{js,css,scss,md,ts,tsx}": "npx pretty-quick --staged"
   }
 }
