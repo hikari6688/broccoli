@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import axios from 'axios'
+axios.defaults.timeout
 import {
   Observable,
   fromEvent,
