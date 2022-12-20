@@ -39,7 +39,7 @@
     "vite": "^3.2.3"
   },
   "lint-staged": {
-    "*.{js,ts,tsx}": "eslint --cache --fix",
+    "*.{js,ts,tsx}": "eslint --fix",
     "*.{js,css,scss,md,ts,tsx}": "npx pretty-quick --staged"
   }
 }

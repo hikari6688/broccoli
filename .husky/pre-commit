@@ -4,3 +4,5 @@
 yarn test
 
 yarn lint-staged
+
+echo 🥦🥦🥦
