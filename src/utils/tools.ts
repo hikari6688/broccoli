@@ -3,13 +3,13 @@ export function withUnit(size: number): string {
   const m = 1024 * 1024;
   const g = 1024 * 1024 * 1024;
   if (size > g) {
-    return Number(size / g).toFixed(2) + "G";
+    return Number(size / g).toFixed(2) + 'G';
   }
   if (size > m) {
-    return Number(size / m).toFixed(2) + "M";
+    return Number(size / m).toFixed(2) + 'M';
   }
   if (size > kb) {
-    return Number(size / kb).toFixed(2) + "KB";
+    return Number(size / kb).toFixed(2) + 'KB';
   }
-  return size + "B";
+  return size + 'B';
 }

@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import axios from 'axios'
-axios.defaults.timeout
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+axios.defaults.timeout;
 import {
   Observable,
   fromEvent,
@@ -13,9 +13,9 @@ import {
   debounce,
   debounceTime,
   throttleTime,
-} from "rxjs";
-import reactLogo from "./assets/react.svg";
-import "./App.css";
+} from 'rxjs';
+import reactLogo from './assets/react.svg';
+import './App.css';
 
 function App() {
   interface IRequrst {
@@ -37,12 +37,12 @@ function App() {
   }
 
   function request(): Promise<IResponse[]> {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       setTimeout(() => {
         return resolve([
           {
-            name: "izumi",
-            idCard: "1111111",
+            name: 'izumi',
+            idCard: '1111111',
             agency: 12222,
           },
         ]);
@@ -51,12 +51,11 @@ function App() {
   }
 
   useEffect(() => {
-    fromEvent(
-      document.getElementById("trigger") as HTMLElement,
-      "click"
-    ).pipe(throttleTime(1000)).subscribe((e)=>{
-      console.log(e)
-    });
+    fromEvent(document.getElementById('trigger') as HTMLElement, 'click')
+      .pipe(throttleTime(1000))
+      .subscribe(e => {
+        console.log(e);
+      });
   }, []);
 
   return (
