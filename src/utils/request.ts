@@ -2,7 +2,6 @@ import axios, { AxiosRequestConfig } from 'axios';
 import { tokenKey } from '@/conf/index';
 import useLocalStorage from '@/hooks/useLocalStorage';
 const baseURL = '/api';
-
 const instance = axios.create({
   baseURL,
   timeout: 15 * 1000,
