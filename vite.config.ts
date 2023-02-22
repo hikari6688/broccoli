@@ -18,6 +18,12 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 8080,
+    proxy: {
+      '^/api': {
+        target: 'http://cloud.dev.aossci.com',
+        changeOrigin: true,
+      },
+    },
   },
   build: {
     emptyOutDir: true, // 默认情况下，若 outDir 在 root 目录下，则 Vite 会在构建时清空该目录

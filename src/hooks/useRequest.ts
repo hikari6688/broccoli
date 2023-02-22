@@ -1,36 +1,39 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import axios, { AxiosResponse } from 'axios';
+import { Response } from '@/utils/request';
 
-interface IRequestConfig<TParams, TData> {
+interface Options<TData, TParams> {
   defaultParams?: TParams;
   manual?: boolean;
   loadingDelay?: number;
   debounceTime?: number;
   throttleTime?: number;
   retryCount?: number;
-  onBefore?: (params: TParams) => void;
-  onSuccess?: (data: TData, params: TParams) => void;
-  onError?: (e: Error, params: TParams) => void;
-  onFinally?: (params: TParams, data?: TData, e?: Error) => void;
+  onSuccess?: (data: TData | undefined, params: TParams | undefined) => void;
+  onError?: (e: any, params: TParams | undefined) => void;
+  onFinally?: (params: TParams | undefined, data?: TData, err?: any) => void;
 }
 
-interface IResponse<T> extends AxiosResponse {
-  [responseArg: string]: any;
-  data: {
-    [responseDataParams: string]: any;
-    data: T;
-  };
+interface PromiseResponse<T> extends AxiosResponse {
+  data: Response<T>;
 }
 
-export function useRequest<TParams, TResponse>(
-  request: (params: TParams | []) => Promise<IResponse<TResponse>>,
-  requestConfig: IRequestConfig<TParams, TResponse> = {},
+function useRequest<TData, TParams extends any[]>(
+  request: (...params: TParams) => Promise<PromiseResponse<TData>>,
+  options?: Options<TData, TParams>,
 ) {
+
   const { CancelToken } = axios;
   const source = CancelToken.source();
-  const [state, setState] = useState<TResponse>();
+  const [data, setData] = useState<TData>();
   const [loading, setLoading] = useState<boolean>(false);
-  const paramsRef = useRef<{ current: TParams }>();
+  const requestRef = useRef(request);
+  const paramsRef = useRef<TParams>();
+  const errorRef = useRef<any>();
+  const timerRef = useRef<NodeJS.Timer>();
+  const retryTimes = useRef<number>(0);
+  const pendingRef = useRef<number>(0);
+  if (!options) options = {};
   const {
     manual,
     defaultParams,
@@ -38,21 +41,66 @@ export function useRequest<TParams, TResponse>(
     debounceTime,
     throttleTime,
     retryCount,
-  } = requestConfig;
+    onSuccess,
+    onError,
+    onFinally,
+  } = options;
+  async function run(...params: TParams): Promise<PromiseResponse<TData>> {
+    let timer: NodeJS.Timer;
+    return new Promise(async (resolve, reject) => {
+      try {
+        paramsRef.current = params;
+        if (loadingDelay) {
+          timerRef.current = setInterval(() => {
+            pendingRef.current++;
+          }, 1000);
+        } else {
+          setLoading(true);
+        }
+        const result = await requestRef.current(...params);
+        timerRef.current && clearInterval(timerRef.current);
 
-  async function run(...params: TParams): Promise<TResponse> {
+        if (loadingDelay && pendingRef.current > loadingDelay) {
+          setLoading(true);
+        }
 
+        setData(result?.data?.data);
+        onSuccess && onSuccess(data, params);
+        return resolve(result);
+      } catch (error) {
+        errorRef.current = error;
+        onError && onError(error, paramsRef.current);
+        if (retryCount && retryTimes.current < retryCount) {
+          retryTimes.current++;
+          return run(...params);
+        } else {
+          retryTimes.current = 0;
+          return reject(error);
+        }
+      } finally {
+        setLoading(false);
+        onFinally && onFinally(paramsRef.current, data, errorRef.current);
+        timer && clearInterval(timer);
+      }
+    });
   }
 
-  function cancel(): void {
+  function cancel() {
     source.cancel();
+    setLoading(false);
   }
 
   function refresh() {
-    run(paramsRef.current);
+    run(...(paramsRef.current as TParams));
   }
-  if (!manual) {
-    run(defaultParams);
-  }
-  return { state, loading, run, cancel, refresh };
+
+  useEffect(() => {
+    if (!manual) {
+      run(...((defaultParams || []) as TParams));
+    }
+  }, []);
+
+  return { data, loading, run, cancel, refresh };
 }
+
+export default useRequest;
