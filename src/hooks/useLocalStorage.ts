@@ -4,7 +4,8 @@ function useLocalStorage<T>(key: string) {
   const [state, setState] = useState<T | null>();
   function getStorage(): T | null {
     const moment = new Date().getTime();
-    const { expire, value } = JSON.parse(localStorage.getItem(key) as string);
+    const { expire, value } =
+      JSON.parse(localStorage.getItem(key) as string) || {};
     if (expire && moment > expire) {
       localStorage.removeItem(key);
       setState(null);

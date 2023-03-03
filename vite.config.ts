@@ -11,13 +11,16 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        // additionalData: `@import '@/styles/variables.scss';`,
+        additionalData: `@import '@/styles/index.scss';`,
       },
     },
+    modules:{},
+    postcss:{}
   },
   server: {
     host: '0.0.0.0',
     port: 8080,
+    strictPort: true,
     proxy: {
       '^/api': {
         target: 'http://cloud.dev.aossci.com',

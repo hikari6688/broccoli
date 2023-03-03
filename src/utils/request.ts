@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { tokenKey } from '@/conf/index';
+import { tokenKey } from '@/config/index';
 import useLocalStorage from '@/hooks/useLocalStorage';
 
 export interface Response<T> {
